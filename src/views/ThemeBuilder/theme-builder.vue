@@ -358,7 +358,7 @@ export default {
   },
   mounted() {
     for (var a = this._.debounce(this.r, 200), t = 0; t < e.length; ++t) {
-      this.p(t, !0);
+      // this.p(t, !0);
     }
     this.$watch("theme", a, {deep: !0})
     this.axisSeperateSettingChanges()
@@ -373,7 +373,7 @@ export default {
     selectPreDefinedTheme(e) {
       for (var a = 0; a < this.loadedThemes.length; ++a) {
         if (this.loadedThemes[a].id === e) {
-          return this.l(this.loadedThemes[a].data)
+          return this.loadThemes(this.loadedThemes[a].data)
         }
       }
       this.p(e, !1)
@@ -405,8 +405,9 @@ export default {
     },
     importFileChanged(e) {
       var a, t;
+      const _this = this
       e.target.files && (".json" === (a = e.target.files[0]).name.slice(a.name.lastIndexOf(".")) ? ((t = new FileReader).onload = function () {
-        this.l(window.result)
+        _this.loadThemes(this.result)
       }, t.onerror = function (e) {
         alert("打开文件失败！"), console.error(e)
       }, t.readAsText(a), $("#input-file").val("")) : alert("非法后缀！请使用本网站导出的 *.json 文件。"))
@@ -2099,7 +2100,7 @@ export default {
       }], y = 0; y < g.length; ++y) g[y].legend = g[y].legend || r, g[y].tooltip = g[y].tooltip || n, g[y].grid = g[y].grid || s;
       return g
     },
-    l(e) {
+    loadThemes(e) {
       try {
         var a = e;
         if (typeof e === 'string') {
@@ -2289,9 +2290,10 @@ export default {
     },
     p(a, t) {
       const _this = this
-      const json = import("./themes/" + e[a].name + ".json")
+      const obj = e[a]
+      const json = import("./themes/" + obj.name + ".json")
       json.then(res => {
-        _this.loadedThemes.push({id: a, data: res}), t || this.l(res)
+        _this.loadedThemes.push({id: a, data: res}), t || this.loadThemes(res)
       })
       // $.ajax({
       //   url: "./theme-builder/themes/" + e[a].name + ".json", dataType: "text", success: function (e) {
