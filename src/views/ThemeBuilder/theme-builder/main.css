@@ -200,8 +200,6 @@ a {
     flex-wrap: wrap;
     justify-content: space-between;
     width: auto;
-    height: 32px;
-    overflow: hidden;
     border: 1px solid #eee;
     padding: 5px;
     border-radius: 4px;
