@@ -16,6 +16,10 @@ Vue.prototype._ = _
 
 import './views/ThemeBuilder/theme-builder/main.css'
 
+import VueClipboard from 'vue-clipboard2'
+
+Vue.use(VueClipboard)
+
 Vue.config.productionTip = false
 
 new Vue({

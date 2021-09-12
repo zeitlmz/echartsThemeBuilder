@@ -1,9 +1,9 @@
 <template>
-  <div class="detail" :style="{maxWidth:maxWidth||'100%',width:width||'auto',height:height||'100%'}">
+  <el-scrollbar class="detail" :style="{maxWidth:maxWidth||'100%',width:width||'auto',height:height||'100%'}">
     <div class="markdown-body">
       <div class="article_message hljs renderNav" v-html="getContent"></div>
     </div>
-  </div>
+  </el-scrollbar>
 </template>
 
 <script>
@@ -47,7 +47,11 @@ export default {
 
 <style>
 .markdown-body blockquote, .markdown-body details, .markdown-body dl, .markdown-body ol, .markdown-body p, .markdown-body pre, .markdown-body table, .markdown-body ul {
-  margin-bottom: 0;
-  background-color: white;
+  margin: 0;
+  padding: 20px;
+  border-radius: 5px;
+  /*font-weight: bold;*/
+  font-family: "等线", serif;
+  background-color: rgba(245, 245, 245, 0.42);
 }
 </style>
