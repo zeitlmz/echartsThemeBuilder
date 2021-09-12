@@ -287,12 +287,12 @@
             <el-button v-if="downloadable"
                        @click="downloadThemeJson()">下载
             </el-button>
-            <el-button @click="copyThemeJson()">复制</el-button>
+            <el-button @click="doCopy('json')">复制</el-button>
             <label v-if="jsonCopySuccess">已复制到剪贴板,请使用<kbd>{{ copyKbd }}</kbd> + <kbd>s</kbd>复制，并保存至
               <code>*.json</code>
               文件</label>
             <!--            <pre><code class="json" id="json-code">{{downThemeJsonCode}}</code></pre>-->
-            <mark-down :content="'```json\n'+downThemeJsonCode+'\n```'"/>
+            <mark-down height="450px" :content="'```json\n'+downThemeJsonCode+'\n```'"/>
           </div>
         </el-tab-pane>
         <el-tab-pane label="JS版本" name="jsVersion">
@@ -307,14 +307,14 @@
             </ol>
             <div>
               <el-button v-if="downloadable" @click="downloadThemeJs()">下载</el-button>
-              <el-button @click="copyThemeJs()">复制</el-button>
+              <el-button @click="doCopy('js')">复制</el-button>
               <label v-if="jsCopySuccess">已复制到剪贴板,请使用<kbd>{{ copyKbd }}</kbd> + <kbd>s</kbd>复制，并保存至
                 <code>*.js</code>
                 文件</label>
             </div>
             <!--            <pre><code class="javascript" id="js-code">{{downThemeJsCode}}</code></pre>-->
             <el-scrollbar>
-              <mark-down :content="'```javascript\n'+downThemeJsCode+'\n```'"/>
+              <mark-down height="450px" :content="'```javascript\n'+downThemeJsCode+'\n```'"/>
             </el-scrollbar>
           </div>
         </el-tab-pane>
@@ -324,7 +324,6 @@
 </template>
 
 <script>
-import hljs from 'highlight.js'
 import {saveAs} from 'file-saver';
 import configColor from './components/ConfigColor'
 import configColorList from './components/ConfigColorList'
@@ -382,9 +381,7 @@ export default {
     useTheme() {
       this.downThemeView = true
       this.downThemeJsCode = this.b()
-      this.downThemeJsonCode = JSON.stringify(this.m(!0), null, "    ")
-      hljs.highlightBlock($("#js-code")[0])
-      hljs.highlightBlock($("#json-code")[0])
+      this.downThemeJsonCode = JSON.stringify(this.m(!0), null, 4)
     },
     downloadThemeJson() {
       this.d(this.m(!0), (this.themeName || "customed") + ".json")
@@ -392,14 +389,6 @@ export default {
     downloadThemeJs() {
       var e, a;
       e = this.b(), a = (this.themeName || "customed") + ".js", this.c(e, a, "js")
-    },
-    copyThemeJson() {
-      this.h("json")
-      this.jsonCopySuccess = true
-    },
-    copyThemeJs() {
-      this.h("js")
-      this.jsCopySuccess = true
     },
     newTheme() {
       this.$set(this, "theme", this.f(n)), this.$set(this, 'themeName', 'customed'), this.axisSeperateSettingChanges()
@@ -2275,7 +2264,7 @@ export default {
       }
     },
     d(e, a) {
-      this.c(JSON.stringify(e, null, "    "), a, "json")
+      this.c(JSON.stringify(e, null, 4), a, "json")
     },
     c(a, e, t) {
       if (0 < navigator.userAgent.indexOf("Safari") && navigator.userAgent.indexOf("Chrome") < 0) window.open("data:text/plain;charset=utf-8," + encodeURIComponent(a)); else try {
@@ -2295,18 +2284,6 @@ export default {
       var e = (e = JSON.stringify(this.m(!0), null, "    ")).split("\n").join("\n    ");
       return "(function (root, factory) {\n    if (typeof define === 'function' && define.amd) {\n        // AMD. Register as an anonymous module.\n        define(['exports', 'echarts'], factory);\n    } else if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {\n        // CommonJS\n        factory(exports, require('echarts'));\n    } else {\n        // Browser globals\n        factory({}, root.echarts);\n    }\n}(this, function (exports, echarts) {\n    var log = function (msg) {\n        if (typeof console !== 'undefined') {\n            console && console.error && console.error(msg);\n        }\n    };\n    if (!echarts) {\n        log('ECharts is not Loaded');\n        return;\n    }\n    echarts.registerTheme('" + this.themeName + "', " + e + ");\n}));\n"
     },
-    h(e) {
-      var a, t;
-
-      function l(e) {
-        $("#" + e).fadeIn()
-        setTimeout(function () {
-          $("#" + e).fadeOut()
-        }, 1e4)
-      }
-
-      window.getSelection ? ((t = document.createRange()).selectNode($("#" + e + "-code")[0]), (a = window.getSelection()).removeAllRanges(), a.addRange(t)) : document.selection && ((t = document.body.createTextRange()).moveToElementText($("#" + e + "-code")[0]), t.select()), $(".code-btn label").hide(), this.g() || this.y() || !document.execCommand("copy") ? l("copy-" + e + "-fail") : (l("copy-" + e + "-success"), window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty())
-    },
     f(e) {
       return $.extend(!0, {}, e)
     },
@@ -2321,7 +2298,25 @@ export default {
       //     _this.loadedThemes.push({id: a, data: e}), t || this.l(e)
       //   }
       // })
-    }
+    },
+    doCopy(type) {
+      const _this = this;
+      let msg = ''
+      if (type === 'json') {
+        msg = this.downThemeJsonCode
+      } else if (type === 'js') {
+        msg = this.downThemeJsCode
+      }
+      this.$copyText(msg).then(function () {
+        if (type === 'json') {
+          _this.jsonCopySuccess = true
+        } else if (type === 'js') {
+          _this.jsCopySuccess = true
+        }
+      }, function () {
+        _this.$message.error('复制失败')
+      })
+    },
   }
 }
 

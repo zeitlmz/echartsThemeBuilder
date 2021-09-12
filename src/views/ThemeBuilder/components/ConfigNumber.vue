@@ -19,20 +19,18 @@ export default {
     enabled: {twoWay: !0, default: !0}
   },
   watch: {
-    value: {
-      handler(newVal) {
-        this.currentValue = newVal
-      }
+    currentValue(newValue) {
+      this.setValue(newValue)
     }
   },
   data() {
     return {
-      currentValue: 0
+      currentValue: this.value
     }
   },
   methods: {
-    setAttr() {
-      this.$emit('update:value', this.currentValue)
+    setValue(newValue) {
+      this.$emit('update:value', newValue)
     }
   }
 }
